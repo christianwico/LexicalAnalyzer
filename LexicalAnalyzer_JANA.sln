@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzer_JANA", "LexicalAnalyzer_JANA\LexicalAnalyzer_JANA.csproj", "{723A0B0B-3E50-4711-8A74-21E0C22A691F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{723A0B0B-3E50-4711-8A74-21E0C22A691F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{723A0B0B-3E50-4711-8A74-21E0C22A691F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{723A0B0B-3E50-4711-8A74-21E0C22A691F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{723A0B0B-3E50-4711-8A74-21E0C22A691F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
