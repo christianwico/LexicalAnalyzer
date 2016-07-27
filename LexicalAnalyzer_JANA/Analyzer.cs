@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LexicalAnalyzer_JANA
@@ -28,7 +29,7 @@ namespace LexicalAnalyzer_JANA
 
         // Regular Expressions
         private string space = "\\s";
-        private string paren = "(";
+        private string paren = "\\(";
         private string hyphen = "\\-";
         private string semic = ";";
         private string newline = "\\n";
@@ -74,34 +75,172 @@ namespace LexicalAnalyzer_JANA
 
         public string analyze(string statement)
         {
-            bool isSpace = false;
-            output = "[ID: 00] No errors.";
+            bool isRW = false;
             input = statement.Trim().ToCharArray();
             current = "";
 
             foreach (var c in input)
             {
-                if (c != ' ')
+                if (isRW)
                 {
-                    current += c.ToString();
-                    isSpace = false;
-                }
-                else
-                {
-                    if (!isSpace)
+                    if (hasLookAhead(current, c.ToString()))
                     {
                         frmMain.Self.dGridResults.Rows.Add(current, current);
+                        output = "[ID: 00] No errors.";
                         current = "";
+                        isRW = false;
+                        continue;
+                    } else
+                    {
+                        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                        output = "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".";
+                        current = "";
+                        isRW = false;
+                        continue;
                     }
-
-                    isSpace = true;
                 }
+
+                current += c.ToString();
+                isRW = checkRW(current);
             }
 
-            frmMain.Self.dGridResults.Rows.Add(current, current);
-            current = "";
-
             return output;
+        }
+
+        private bool hasLookAhead(string current, string c)
+        {
+            switch (current)
+            {
+                case "get":
+                    Regex rgx = new Regex(hyphen);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "out":
+                    rgx = new Regex(hyphen);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "clean":
+                    rgx = new Regex(paren);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "tolower":
+                    rgx = new Regex(paren);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "toupper":
+                    rgx = new Regex(paren);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "exit":
+                    rgx = new Regex(paren);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "main":
+                    rgx = new Regex(paren);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "false":
+                    rgx = new Regex(delRW_1);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "stop":
+                    rgx = new Regex(delRW_1);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "true":
+                    rgx = new Regex(delRW_1);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "choice":
+                    rgx = new Regex(delRW_2);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "fall":
+                    rgx = new Regex(delRW_2);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "attempt":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "handle":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "do":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "else":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "elseif":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "test":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "then":
+                    rgx = new Regex(delRW_3);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "iterate":
+                    rgx = new Regex(delRW_4);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "strlen":
+                    rgx = new Regex(delRW_4);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "until":
+                    rgx = new Regex(delRW_4);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "boolean":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "char":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "class":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "int":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "inherits":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "new":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "public":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "if":
+                    rgx = new Regex(delRW_4);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "private":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "real":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "return":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "static":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "string":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "struct":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+                case "void":
+                    rgx = new Regex(space);
+                    return (rgx.IsMatch(c) ? true : false);
+            }
+
+            return false;
+        }
+
+        //private string[] RW = { "get", "out", "clean", "tolower", "toupper", "exit", "main",
+        //    "false", "stop", "true", "choice", "fall", "attempt", "handle", "do", "else", "elseif",
+        //    "test", "then", "if", "iterate", "strlen", "until", "boolean", "char", "class", "int",
+        //    "inherits", "new", "public", "private", "real", "return", "static", "string", "struct",
+        //    "void" };
+
+        private bool checkRW(string current)
+        {
+            foreach (var s in RW)
+            {
+                if (current == s) return true;
+            }
+
+            return false;
         }
     }
 }
