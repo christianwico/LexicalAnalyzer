@@ -71,10 +71,37 @@ namespace LexicalAnalyzer_JANA
         private string intType = "^(~)*[1-9][0-9]{0,9}$";
         private string floatType = "^(~)*[1-9][0-9]{0,9}\\.[1-9][0-9]{0,4}$";
         private string charType = "'.'";
-        private string stringType = "^\".* \"$";
+        private string stringType = "^(\").*(\")$";
+
+        // Arithmetic Operators
+        private string add = "\\+";
+        private string subtract = "\\-";
+        private string divide = "/";
+        private string wut = "\\";
+        private string modulo = "%";
+        private string multiply = "\\*";
+        private string power = "\\^";
+        private string negate = "~";
+
+        // Logical Operators
+        private string logical_and = "@@";
+        private string logical_or = "\\|\\|";
+
+        // Relational Operators
+        private string equal = "==";
+        private string not_equal = "==!";
+        private string gt = ">>";
+        private string lt = "<<";
+        private string gt_equal = ">>=";
+        private string lt_equal = "<<=";
 
         public string analyze(string statement)
         {
+            Regex rgxFloat = new Regex(floatType);
+            Regex rgxInt = new Regex(intType);
+            Regex rgxChar = new Regex(charType);
+            Regex rgxString = new Regex(stringType);
+            Regex rgxId = new Regex(id);
             bool isRW = false;
             bool hasError = false;
             input = statement.TrimStart().ToCharArray();
@@ -98,11 +125,23 @@ namespace LexicalAnalyzer_JANA
                         {
                             frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                             hasError = true;
-                            output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                            output += "Incorrect use of reserved word \"" + current + "\".\n";
                             current = "";
                             isRW = false;
                             continue;
                         }
+                    } else
+                    {
+                        if (rgxFloat.IsMatch(current))
+                            frmMain.Self.dGridResults.Rows.Add(current, "floattype");
+                        else if (rgxInt.IsMatch(current))
+                            frmMain.Self.dGridResults.Rows.Add(current, "inttype");
+                        else if (rgxChar.IsMatch(current))
+                            frmMain.Self.dGridResults.Rows.Add(current, "chartype");
+                        else if (rgxString.IsMatch(current))
+                            frmMain.Self.dGridResults.Rows.Add(current, "stringtype");
+                        else if (rgxId.IsMatch(current))
+                            frmMain.Self.dGridResults.Rows.Add(current, "identifier");
                     }
 
                     current = "";
@@ -118,7 +157,7 @@ namespace LexicalAnalyzer_JANA
                         {
                             frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                             hasError = true;
-                            output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                            output += "Incorrect use of reserved word \"" + current + "\".\n";
                         }
 
                         current = "";
@@ -184,7 +223,7 @@ namespace LexicalAnalyzer_JANA
                 {
                     frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                     hasError = true;
-                    output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                    output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\n";
                     current = "";
                     isRW = false;
                 }
@@ -192,7 +231,7 @@ namespace LexicalAnalyzer_JANA
 
             current = "";
 
-            if (!hasError) output = "[ID: 00] No errors.";
+            if (!hasError) output = "No errors.";
 
             return output;
         }
