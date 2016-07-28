@@ -108,11 +108,21 @@ namespace LexicalAnalyzer_JANA
 
             if (current != "")
             {
-                frmMain.Self.dGridResults.Rows.Add(current, "invalid");
-                hasError = true;
-                output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
-                current = "";
-                isRW = false;
+                Regex rgx = new Regex(id);
+                if (!rgx.IsMatch(current))
+                {
+                    frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                    hasError = true;
+                    output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
+                    current = "";
+                    isRW = false;
+                } else
+                {
+                    frmMain.Self.dGridResults.Rows.Add(current, "identifier");
+                    current = "";
+                    isRW = false;
+                }
+                    
             }
 
             if (!hasError) output = "[ID: 00] No errors.";
