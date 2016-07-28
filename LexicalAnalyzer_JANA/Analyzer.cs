@@ -76,7 +76,7 @@ namespace LexicalAnalyzer_JANA
         public string analyze(string statement)
         {
             bool isRW = false;
-            input = statement.Trim().ToCharArray();
+            input = statement.TrimStart().ToCharArray();
             current = "";
 
             foreach (var c in input)
