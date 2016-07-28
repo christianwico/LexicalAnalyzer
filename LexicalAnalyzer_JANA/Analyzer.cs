@@ -82,48 +82,115 @@ namespace LexicalAnalyzer_JANA
 
             foreach (var c in input)
             {
-                if (c == ' ' && !isRW) continue;
-                if (isRW)
+                if (c == ' ' && current == "") continue;
+                else if (c == ' ' && current != "")
                 {
-                    if (hasLookAhead(current, c.ToString()))
+                    if (isRW)
                     {
-                        frmMain.Self.dGridResults.Rows.Add(current, current);
-                        current = "";
-                        isRW = false;
-                        continue;
-                    } else
+                        if (hasLookAhead(current, c.ToString()))
+                        {
+                            frmMain.Self.dGridResults.Rows.Add(current, current);
+                            current = "";
+                            isRW = false;
+                            continue;
+                        }
+                        else
+                        {
+                            frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                            hasError = true;
+                            output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                            current = "";
+                            isRW = false;
+                            continue;
+                        }
+                    }
+
+                    current = "";
+                } else
+                {
+                    if (isRW)
                     {
-                        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
-                        hasError = true;
-                        output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                        if (hasLookAhead(current, c.ToString()))
+                        {
+                            frmMain.Self.dGridResults.Rows.Add(current, current);
+                        }
+                        else
+                        {
+                            frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                            hasError = true;
+                            output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                        }
+
                         current = "";
                         isRW = false;
                         continue;
                     }
-                }
 
-                current += c.ToString();
-                isRW = checkRW(current);
+                    current += c.ToString();
+                    isRW = checkRW(current);
+                }
+                //if (c == ' ' && !isRW) continue;
+                //if (isRW)
+                //{
+                //    if (hasLookAhead(current, c.ToString()))
+                //    {
+                //        frmMain.Self.dGridResults.Rows.Add(current, current);
+                //        current = "";
+                //        isRW = false;
+                //        continue;
+                //    } else
+                //    {
+                //        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                //        hasError = true;
+                //        output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
+                //        current = "";
+                //        isRW = false;
+                //        continue;
+                //    }
+                //}
+
+                //current += c.ToString();
+                //isRW = checkRW(current);
             }
 
-            if (current != "")
+            //if (current != "")
+            //{
+            //    Regex rgx = new Regex(id);
+            //    if (!rgx.IsMatch(current))
+            //    {
+            //        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+            //        hasError = true;
+            //        output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
+            //        current = "";
+            //        isRW = false;
+            //    } else
+            //    {
+            //        frmMain.Self.dGridResults.Rows.Add(current, "identifier");
+            //        current = "";
+            //        isRW = false;
+            //    }
+
+            //}
+
+            if (isRW)
             {
-                Regex rgx = new Regex(id);
-                if (!rgx.IsMatch(current))
+                if (hasLookAhead(current, ""))
+                {
+                    frmMain.Self.dGridResults.Rows.Add(current, current);
+                    current = "";
+                    isRW = false;
+                }
+                else
                 {
                     frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                     hasError = true;
-                    output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
-                    current = "";
-                    isRW = false;
-                } else
-                {
-                    frmMain.Self.dGridResults.Rows.Add(current, "identifier");
+                    output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
                     current = "";
                     isRW = false;
                 }
-                    
             }
+
+            current = "";
 
             if (!hasError) output = "[ID: 00] No errors.";
 
@@ -249,12 +316,6 @@ namespace LexicalAnalyzer_JANA
 
             return false;
         }
-
-        //private string[] RW = { "get", "out", "clean", "tolower", "toupper", "exit", "main",
-        //    "false", "stop", "true", "choice", "fall", "attempt", "handle", "do", "else", "elseif",
-        //    "test", "then", "if", "iterate", "strlen", "until", "boolean", "char", "class", "int",
-        //    "inherits", "new", "public", "private", "real", "return", "static", "string", "struct",
-        //    "void" };
 
         private bool checkRW(string current)
         {
