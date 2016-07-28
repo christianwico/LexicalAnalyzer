@@ -69,7 +69,7 @@ namespace LexicalAnalyzer_JANA
 
         // Data Values
         private string intType = "^(~)*[1-9][0-9]{0,9}$";
-        private string floatType = "^(~)*[1-9][0-9]{0,9}\\.[1-9][0-9]{0,4}$";
+        private string floatType = "^(~|[1-9])[0-9]{0,9}\\.[0-9]{0,10}";
         private string charType = "'.'";
         private string stringType = "^(\").*(\")$";
 
@@ -142,6 +142,12 @@ namespace LexicalAnalyzer_JANA
                             frmMain.Self.dGridResults.Rows.Add(current, "stringtype");
                         else if (rgxId.IsMatch(current))
                             frmMain.Self.dGridResults.Rows.Add(current, "identifier");
+                        else
+                        {
+                            frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                            hasError = true;
+                            output += "[ERROR] Unknown symbol \"" + current + "\".";
+                        }
                     }
 
                     current = "";
@@ -168,48 +174,7 @@ namespace LexicalAnalyzer_JANA
                     current += c.ToString();
                     isRW = checkRW(current);
                 }
-                //if (c == ' ' && !isRW) continue;
-                //if (isRW)
-                //{
-                //    if (hasLookAhead(current, c.ToString()))
-                //    {
-                //        frmMain.Self.dGridResults.Rows.Add(current, current);
-                //        current = "";
-                //        isRW = false;
-                //        continue;
-                //    } else
-                //    {
-                //        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
-                //        hasError = true;
-                //        output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
-                //        current = "";
-                //        isRW = false;
-                //        continue;
-                //    }
-                //}
-
-                //current += c.ToString();
-                //isRW = checkRW(current);
             }
-
-            //if (current != "")
-            //{
-            //    Regex rgx = new Regex(id);
-            //    if (!rgx.IsMatch(current))
-            //    {
-            //        frmMain.Self.dGridResults.Rows.Add(current, "invalid");
-            //        hasError = true;
-            //        output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
-            //        current = "";
-            //        isRW = false;
-            //    } else
-            //    {
-            //        frmMain.Self.dGridResults.Rows.Add(current, "identifier");
-            //        current = "";
-            //        isRW = false;
-            //    }
-
-            //}
 
             if (isRW)
             {
@@ -226,6 +191,25 @@ namespace LexicalAnalyzer_JANA
                     output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\n";
                     current = "";
                     isRW = false;
+                }
+            }
+            else
+            {
+                if (rgxFloat.IsMatch(current))
+                    frmMain.Self.dGridResults.Rows.Add(current, "floattype");
+                else if (rgxInt.IsMatch(current))
+                    frmMain.Self.dGridResults.Rows.Add(current, "inttype");
+                else if (rgxChar.IsMatch(current))
+                    frmMain.Self.dGridResults.Rows.Add(current, "chartype");
+                else if (rgxString.IsMatch(current))
+                    frmMain.Self.dGridResults.Rows.Add(current, "stringtype");
+                else if (rgxId.IsMatch(current))
+                    frmMain.Self.dGridResults.Rows.Add(current, "identifier");
+                else
+                {
+                    frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                    hasError = true;
+                    output += "[ERROR] Unknown symbol \"" + current + "\".";
                 }
             }
 
