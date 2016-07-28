@@ -76,24 +76,26 @@ namespace LexicalAnalyzer_JANA
         public string analyze(string statement)
         {
             bool isRW = false;
+            bool hasError = false;
             input = statement.TrimStart().ToCharArray();
             current = "";
 
             foreach (var c in input)
             {
+                if (c == ' ' && !isRW) continue;
                 if (isRW)
                 {
                     if (hasLookAhead(current, c.ToString()))
                     {
                         frmMain.Self.dGridResults.Rows.Add(current, current);
-                        output = "[ID: 00] No errors.";
                         current = "";
                         isRW = false;
                         continue;
                     } else
                     {
                         frmMain.Self.dGridResults.Rows.Add(current, "invalid");
-                        output = "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".";
+                        hasError = true;
+                        output += "[ERROR ID: 01] Incorrect use of reserved word \"" + current + "\".\n";
                         current = "";
                         isRW = false;
                         continue;
@@ -103,6 +105,17 @@ namespace LexicalAnalyzer_JANA
                 current += c.ToString();
                 isRW = checkRW(current);
             }
+
+            if (current != "")
+            {
+                frmMain.Self.dGridResults.Rows.Add(current, "invalid");
+                hasError = true;
+                output += "[ERROR ID: 02] Unknown symbol \"" + current + "\".\n";
+                current = "";
+                isRW = false;
+            }
+
+            if (!hasError) output = "[ID: 00] No errors.";
 
             return output;
         }
