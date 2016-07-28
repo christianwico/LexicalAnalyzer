@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace LexicalAnalyzer_JANA
 {
@@ -97,41 +92,47 @@ namespace LexicalAnalyzer_JANA
 
         public string analyze(string statement)
         {
+            // Set-up the Regular Expression objects.
             Regex rgxFloat = new Regex(floatType);
             Regex rgxInt = new Regex(intType);
             Regex rgxChar = new Regex(charType);
             Regex rgxString = new Regex(stringType);
             Regex rgxId = new Regex(id);
+
             bool isRW = false;
             bool hasError = false;
+            output = "COMPLETE.\r\n";
+
+            // Trim whitespaces from start and split string into a CharArray.
             input = statement.TrimStart().ToCharArray();
             current = "";
 
+            // TODO: Refactor the code.
+            // Code beyond this point is extremely redundant.
+
+            // Iterate through the entire CharArray.
             foreach (var c in input)
             {
-                if (c == ' ' && current == "") continue;
+                if (c == ' ' && current == "") continue; // Ignore the whitespaces. Causes problems.
                 else if (c == ' ' && current != "")
                 {
                     if (isRW)
                     {
                         if (hasLookAhead(current, c.ToString()))
-                        {
                             frmMain.Self.dGridResults.Rows.Add(current, current);
-                            current = "";
-                            isRW = false;
-                            continue;
-                        }
                         else
                         {
                             frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                             hasError = true;
-                            output += "Incorrect use of reserved word \"" + current + "\".\n";
-                            current = "";
-                            isRW = false;
-                            continue;
+                            output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\r\n";
                         }
+
+                        current = "";
+                        isRW = false;
+                        continue;
                     } else
                     {
+                        // Check the lexeme for types.
                         if (rgxFloat.IsMatch(current))
                             frmMain.Self.dGridResults.Rows.Add(current, "floattype");
                         else if (rgxInt.IsMatch(current))
@@ -146,7 +147,7 @@ namespace LexicalAnalyzer_JANA
                         {
                             frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                             hasError = true;
-                            output += "[ERROR] Unknown symbol \"" + current + "\".";
+                            output += "[ERROR] Unknown symbol \"" + current + "\".\r\n";
                         }
                     }
 
@@ -156,14 +157,12 @@ namespace LexicalAnalyzer_JANA
                     if (isRW)
                     {
                         if (hasLookAhead(current, c.ToString()))
-                        {
                             frmMain.Self.dGridResults.Rows.Add(current, current);
-                        }
                         else
                         {
                             frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                             hasError = true;
-                            output += "Incorrect use of reserved word \"" + current + "\".\n";
+                            output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\r\n";
                         }
 
                         current = "";
@@ -179,19 +178,16 @@ namespace LexicalAnalyzer_JANA
             if (isRW)
             {
                 if (hasLookAhead(current, ""))
-                {
                     frmMain.Self.dGridResults.Rows.Add(current, current);
-                    current = "";
-                    isRW = false;
-                }
                 else
                 {
                     frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                     hasError = true;
-                    output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\n";
-                    current = "";
-                    isRW = false;
+                    output += "[ERROR] Incorrect use of reserved word \"" + current + "\".\r\n";
                 }
+
+                current = "";
+                isRW = false;
             }
             else
             {
@@ -209,17 +205,18 @@ namespace LexicalAnalyzer_JANA
                 {
                     frmMain.Self.dGridResults.Rows.Add(current, "invalid");
                     hasError = true;
-                    output += "[ERROR] Unknown symbol \"" + current + "\".";
+                    output += "[ERROR] Unknown symbol \"" + current + "\".\r\n";
                 }
             }
 
             current = "";
 
-            if (!hasError) output = "No errors.";
+            if (!hasError) output = "COMPLETE.\r\nNo Errors.";
 
             return output;
         }
 
+        // Method checks for the lookaheads of the reserved words.
         private bool hasLookAhead(string current, string c)
         {
             switch (current)
@@ -340,6 +337,7 @@ namespace LexicalAnalyzer_JANA
             return false;
         }
 
+        // Method checks if the lexeme "current" is a reserved word.
         private bool checkRW(string current)
         {
             foreach (var s in RW)
